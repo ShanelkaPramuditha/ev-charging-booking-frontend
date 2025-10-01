@@ -1,0 +1,18 @@
+# Dependencies
+node_modules/
+dist/
+build/
+
+# Generated files
+routeTree.gen.ts
+
+# Config files
+package-lock.json
+bun.lock
+pnpm-lock.yaml
+
+# Logs
+*.log
+
+# Environment files
+.env*

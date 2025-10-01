@@ -1,0 +1,17 @@
+import { useAuthStore } from '@/stores/auth.store';
+
+/**
+ * Hook to access auth store
+ * Provides user, isAuthenticated, and isLoading
+ */
+export function useAuth() {
+	const user = useAuthStore((state) => state.user);
+	const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+	const isLoading = useAuthStore((state) => state.isLoading);
+
+	return {
+		user,
+		isAuthenticated,
+		isLoading,
+	};
+}

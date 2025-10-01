@@ -1,0 +1,12 @@
+# Specify the default registry
+[install]
+registry = "https://registry.npmjs.org"
+
+# Save exact versions instead of ^ or ~
+saveExact = true
+
+# Where to install global packages
+globalDir = "~/.bun/install/global"
+
+# Enable/disable Bun’s auto-install on import
+autoInstall = false
