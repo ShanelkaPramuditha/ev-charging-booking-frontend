@@ -37,7 +37,7 @@ export interface LoginResponse {
 export interface RegisterRequest {
 	username: string;
 	email: string;
-	role: 'officeUser' | 'operator' | 'evOwner';
+	role: 'backOffice' | 'operator' | 'evOwner';
 	password: string;
 }
 

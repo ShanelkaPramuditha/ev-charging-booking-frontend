@@ -1,5 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Link } from '@tanstack/react-router';
+import { Building2, User } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 
 import { Button } from '@/components/ui/button';
@@ -27,7 +28,7 @@ export function RegisterForm({
 		defaultValues: {
 			username: '',
 			email: '',
-			role: 'officeUser',
+			role: 'backOffice',
 			password: '',
 			confirmPassword: '',
 		},
@@ -38,9 +39,30 @@ export function RegisterForm({
 			username: data.username,
 			email: data.email,
 			password: data.password,
-			role: 'officeUser',
+			role: data.role,
 		});
 	};
+
+	const roleOptions = [
+		{
+			value: 'backOffice' as const,
+			label: 'BackOffice User',
+			description: 'For office staff and administrators',
+			icon: Building2,
+		},
+		{
+			value: 'operator' as const,
+			label: 'Operator',
+			description: 'For charging station operators',
+			icon: User,
+		},
+		// {
+		// 	value: 'evOwner' as const,
+		// 	label: 'EV Owner',
+		// 	description: 'For electric vehicle owners',
+		// 	icon: CarFront,
+		// },
+	];
 
 	return (
 		<Form {...form}>
@@ -61,6 +83,80 @@ export function RegisterForm({
 							{registerMutation.error?.message || 'Registration failed'}
 						</div>
 					)}
+
+					{/* Role Selection */}
+					<FormField
+						control={form.control}
+						name='role'
+						render={({ field }) => (
+							<FormItem>
+								<FormLabel>Select Account Type</FormLabel>
+								<FormControl>
+									<div className='grid grid-cols-1 md:grid-cols-2 gap-3'>
+										{roleOptions.map((option) => {
+											const Icon = option.icon;
+											const isSelected = field.value === option.value;
+											return (
+												<button
+													key={option.value}
+													type='button'
+													onClick={() => field.onChange(option.value)}
+													disabled={registerMutation.isPending}
+													className={cn(
+														'relative flex flex-col items-center gap-2 p-4 rounded-lg border-2 transition-all',
+														'hover:border-primary/50 hover:bg-accent/50',
+														'focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2',
+														'disabled:opacity-50 disabled:cursor-not-allowed',
+														isSelected
+															? 'border-primary bg-accent shadow-sm'
+															: 'border-border bg-background',
+													)}
+												>
+													<Icon
+														className={cn(
+															'h-8 w-8 transition-colors',
+															isSelected
+																? 'text-primary'
+																: 'text-muted-foreground',
+														)}
+													/>
+													<div className='text-center'>
+														<p
+															className={cn(
+																'font-semibold text-sm',
+																isSelected ? 'text-primary' : 'text-foreground',
+															)}
+														>
+															{option.label}
+														</p>
+														<p className='text-xs text-muted-foreground mt-1'>
+															{option.description}
+														</p>
+													</div>
+													{isSelected && (
+														<div className='absolute top-2 right-2 h-5 w-5 rounded-full bg-primary flex items-center justify-center'>
+															<svg
+																className='h-3 w-3 text-primary-foreground'
+																fill='none'
+																strokeLinecap='round'
+																strokeLinejoin='round'
+																strokeWidth='2'
+																viewBox='0 0 24 24'
+																stroke='currentColor'
+															>
+																<polyline points='20 6 9 17 4 12' />
+															</svg>
+														</div>
+													)}
+												</button>
+											);
+										})}
+									</div>
+								</FormControl>
+								<FormMessage />
+							</FormItem>
+						)}
+					/>
 
 					<FormField
 						control={form.control}

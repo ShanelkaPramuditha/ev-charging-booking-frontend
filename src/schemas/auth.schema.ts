@@ -30,7 +30,7 @@ export const registerSchema = z
 			.email('Invalid email format')
 			.toLowerCase()
 			.trim(),
-		role: z.enum(['officeUser', 'operator', 'evOwner']),
+		role: z.enum(['backOffice', 'operator', 'evOwner']),
 		password: z
 			.string()
 			.min(6, 'Password must be at least 6 characters')
