@@ -12,7 +12,7 @@ export function Layout() {
 				{/* Header */}
 				<Header />
 				{/* Main Content */}
-				<main className='p-2 h-full w-full'>
+				<main className='p-3 h-full w-full'>
 					<Outlet />
 				</main>
 			</SidebarInset>

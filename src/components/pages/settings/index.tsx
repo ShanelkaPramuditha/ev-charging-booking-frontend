@@ -6,6 +6,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { type SettingsTab, settingsTabs } from '@/config/search/settings';
 import { useAuth } from '@/context/auth/use-auth';
 
+import { UserManagement } from './users';
+
 export function Settings() {
 	const { user } = useAuth();
 	const navigate = useNavigate();
@@ -28,6 +30,11 @@ export function Settings() {
 			label: settingsTabs[1].label,
 			content: <General />,
 		},
+		{
+			value: settingsTabs[2].value,
+			label: settingsTabs[2].label,
+			content: <UserManagement />,
+		},
 	];
 
 	const handleTabChange = (value: SettingsTab) => {
@@ -35,7 +42,7 @@ export function Settings() {
 	};
 
 	return (
-		<div className='flex w-full max-w-sm flex-col gap-6'>
+		<div className='flex w-full max-w-7xl flex-col gap-6'>
 			<Tabs value={currentTab}>
 				{/* Tab list */}
 				<TabsList>

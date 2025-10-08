@@ -1,5 +1,7 @@
+import { useNavigate } from '@tanstack/react-router';
 import { ChevronRight, type LucideIcon } from 'lucide-react';
 
+import { Button } from '@/components/ui/button';
 import {
 	Collapsible,
 	CollapsibleContent,
@@ -30,6 +32,8 @@ export function NavMain({
 		}[];
 	}[];
 }) {
+	const navigate = useNavigate();
+
 	return (
 		<SidebarGroup>
 			<SidebarGroupLabel>Platform</SidebarGroupLabel>
@@ -54,9 +58,13 @@ export function NavMain({
 									{item.items?.map((subItem) => (
 										<SidebarMenuSubItem key={subItem.title}>
 											<SidebarMenuSubButton asChild>
-												<a href={subItem.url}>
-													<span>{subItem.title}</span>
-												</a>
+												<Button
+													onClick={() => navigate({ to: subItem.url })}
+													className='w-full justify-start'
+													variant='ghost'
+												>
+													{subItem.title}
+												</Button>
 											</SidebarMenuSubButton>
 										</SidebarMenuSubItem>
 									))}

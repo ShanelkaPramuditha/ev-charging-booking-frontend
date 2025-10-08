@@ -85,20 +85,16 @@ const navItems = [
 		icon: Settings2,
 		items: [
 			{
+				title: 'Account',
+				url: '/settings?tab=account',
+			},
+			{
 				title: 'General',
-				url: '#',
+				url: '/settings?tab=general',
 			},
 			{
-				title: 'Team',
-				url: '#',
-			},
-			{
-				title: 'Billing',
-				url: '#',
-			},
-			{
-				title: 'Limits',
-				url: '#',
+				title: 'Users',
+				url: '/settings?tab=users',
 			},
 		],
 	},
