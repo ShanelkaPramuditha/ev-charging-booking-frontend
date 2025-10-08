@@ -1,5 +1,5 @@
 import { useNavigate } from '@tanstack/react-router';
-import { BookOpen, Bot, Settings2, SquareTerminal } from 'lucide-react';
+import { BookOpen, Settings2, SquareTerminal, Zap } from 'lucide-react';
 import type * as React from 'react';
 
 import { NavMain } from '@/components/partials/sidebar/nav-items';
@@ -18,41 +18,25 @@ import { useLogout } from '@/queries/auth.queries';
 
 const navItems = [
 	{
-		title: 'Playground',
+		title: 'Dashboard',
 		url: '#',
 		icon: SquareTerminal,
 		isActive: true,
 		items: [
 			{
-				title: 'History',
-				url: '#',
-			},
-			{
-				title: 'Starred',
-				url: '#',
-			},
-			{
-				title: 'Settings',
-				url: '#',
+				title: 'Overview',
+				url: '/dashboard',
 			},
 		],
 	},
 	{
-		title: 'Models',
+		title: 'Stations',
 		url: '#',
-		icon: Bot,
+		icon: Zap,
 		items: [
 			{
-				title: 'Genesis',
-				url: '#',
-			},
-			{
-				title: 'Explorer',
-				url: '#',
-			},
-			{
-				title: 'Quantum',
-				url: '#',
+				title: 'All Stations',
+				url: '/stations',
 			},
 		],
 	},

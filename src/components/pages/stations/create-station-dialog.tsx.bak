@@ -1,0 +1,356 @@
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
+
+import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
+import {
+	Dialog,
+	DialogContent,
+	DialogDescription,
+	DialogFooter,
+	DialogHeader,
+	DialogTitle,
+} from '@/components/ui/dialog';
+import {
+	Form,
+	FormControl,
+	FormDescription,
+	FormField,
+	FormItem,
+	FormLabel,
+	FormMessage,
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { useCreateStation } from '@/queries/station.queries';
+import { useUsers } from '@/queries/user.queries';
+import {
+	type CreateStationFormData,
+	createStationSchema,
+} from '@/schemas/station.schema';
+
+const DAYS_OF_WEEK = [
+	'Monday',
+	'Tuesday',
+	'Wednesday',
+	'Thursday',
+	'Friday',
+	'Saturday',
+	'Sunday',
+];
+
+interface CreateStationDialogProps {
+	open: boolean;
+	onOpenChange: (open: boolean) => void;
+}
+
+export function CreateStationDialog({
+	open,
+	onOpenChange,
+}: CreateStationDialogProps) {
+	const createMutation = useCreateStation();
+	const { data: users } = useUsers();
+
+	// Filter operators from users list
+	const operators = users?.filter((user) => user.role === 'operator') || [];
+
+	const form = useForm<CreateStationFormData>({
+		resolver: zodResolver(createStationSchema),
+		defaultValues: {
+			name: '',
+			operatorId: '',
+			location: {
+				address: '',
+				city: '',
+				coordinates: {
+					latitude: 0,
+					longitude: 0,
+				},
+			},
+			totalSlots: 4,
+			pricePerHour: 5.0,
+			schedule: {
+				openTime: '08:00',
+				closeTime: '20:00',
+				daysOpen: DAYS_OF_WEEK,
+			},
+		},
+	});
+
+	const handleSubmit = (data: CreateStationFormData) => {
+		createMutation.mutate(data, {
+			onSuccess: () => {
+				form.reset();
+				onOpenChange(false);
+			},
+		});
+	};
+
+	return (
+		<Dialog open={open} onOpenChange={onOpenChange}>
+			<DialogContent className='max-h-[90vh] max-w-2xl overflow-y-auto'>
+				<DialogHeader>
+					<DialogTitle>Create New Station</DialogTitle>
+					<DialogDescription>
+						Add a new charging station to the system
+					</DialogDescription>
+				</DialogHeader>
+
+				<Form {...form}>
+					<form
+						onSubmit={form.handleSubmit(handleSubmit)}
+						className='space-y-6'
+					>
+						{/* Basic Info */}
+						<div className='space-y-4'>
+							<h3 className='font-semibold'>Basic Information</h3>
+							<div className='grid gap-4 sm:grid-cols-2'>
+								<FormField
+									control={form.control}
+									name='name'
+									render={({ field }) => (
+										<FormItem>
+											<FormLabel>Station Name</FormLabel>
+											<FormControl>
+												<Input placeholder='Downtown Charging Hub' {...field} />
+											</FormControl>
+											<FormMessage />
+										</FormItem>
+									)}
+								/>
+								<FormField
+									control={form.control}
+									name='operatorId'
+									render={({ field }) => (
+										<FormItem>
+											<FormLabel>Operator</FormLabel>
+											<FormControl>
+												<select
+													className='flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50'
+													{...field}
+												>
+													<option value=''>Select operator</option>
+													{operators.map((operator) => (
+														<option key={operator.id} value={operator.id}>
+															{operator.username} ({operator.email})
+														</option>
+													))}
+												</select>
+											</FormControl>
+											<FormMessage />
+										</FormItem>
+									)}
+								/>
+							</div>
+						</div>
+
+						{/* Location */}
+						<div className='space-y-4'>
+							<h3 className='font-semibold'>Location</h3>
+							<div className='space-y-4'>
+								<FormField
+									control={form.control}
+									name='location.address'
+									render={({ field }) => (
+										<FormItem>
+											<FormLabel>Address</FormLabel>
+											<FormControl>
+												<Input placeholder='123 Main Street' {...field} />
+											</FormControl>
+											<FormMessage />
+										</FormItem>
+									)}
+								/>
+								<div className='grid gap-4 sm:grid-cols-3'>
+									<FormField
+										control={form.control}
+										name='location.city'
+										render={({ field }) => (
+											<FormItem>
+												<FormLabel>City</FormLabel>
+												<FormControl>
+													<Input placeholder='New York' {...field} />
+												</FormControl>
+												<FormMessage />
+											</FormItem>
+										)}
+									/>
+									<FormField
+										control={form.control}
+										name='location.coordinates.latitude'
+										render={({ field }) => (
+											<FormItem>
+												<FormLabel>Latitude</FormLabel>
+												<FormControl>
+													<Input
+														type='number'
+														step='any'
+														placeholder='40.7128'
+														{...field}
+													/>
+												</FormControl>
+												<FormMessage />
+											</FormItem>
+										)}
+									/>
+									<FormField
+										control={form.control}
+										name='location.coordinates.longitude'
+										render={({ field }) => (
+											<FormItem>
+												<FormLabel>Longitude</FormLabel>
+												<FormControl>
+													<Input
+														type='number'
+														step='any'
+														placeholder='-74.0060'
+														{...field}
+													/>
+												</FormControl>
+												<FormMessage />
+											</FormItem>
+										)}
+									/>
+								</div>
+							</div>
+						</div>
+
+						{/* Pricing & Capacity */}
+						<div className='space-y-4'>
+							<h3 className='font-semibold'>Pricing & Capacity</h3>
+							<div className='grid gap-4 sm:grid-cols-2'>
+								<FormField
+									control={form.control}
+									name='totalSlots'
+									render={({ field }) => (
+										<FormItem>
+											<FormLabel>Total Charging Slots</FormLabel>
+											<FormControl>
+												<Input type='number' min='1' {...field} />
+											</FormControl>
+											<FormDescription>
+												Number of charging points available
+											</FormDescription>
+											<FormMessage />
+										</FormItem>
+									)}
+								/>
+								<FormField
+									control={form.control}
+									name='pricePerHour'
+									render={({ field }) => (
+										<FormItem>
+											<FormLabel>Price per Hour ($)</FormLabel>
+											<FormControl>
+												<Input type='number' min='0' step='0.01' {...field} />
+											</FormControl>
+											<FormDescription>Hourly charging rate</FormDescription>
+											<FormMessage />
+										</FormItem>
+									)}
+								/>
+							</div>
+						</div>
+
+						{/* Schedule */}
+						<div className='space-y-4'>
+							<h3 className='font-semibold'>Operating Hours</h3>
+							<div className='grid gap-4 sm:grid-cols-2'>
+								<FormField
+									control={form.control}
+									name='schedule.openTime'
+									render={({ field }) => (
+										<FormItem>
+											<FormLabel>Opening Time</FormLabel>
+											<FormControl>
+												<Input type='time' {...field} />
+											</FormControl>
+											<FormMessage />
+										</FormItem>
+									)}
+								/>
+								<FormField
+									control={form.control}
+									name='schedule.closeTime'
+									render={({ field }) => (
+										<FormItem>
+											<FormLabel>Closing Time</FormLabel>
+											<FormControl>
+												<Input type='time' {...field} />
+											</FormControl>
+											<FormMessage />
+										</FormItem>
+									)}
+								/>
+							</div>
+
+							<FormField
+								control={form.control}
+								name='schedule.daysOpen'
+								render={() => (
+									<FormItem>
+										<div className='mb-4'>
+											<FormLabel>Operating Days</FormLabel>
+											<FormDescription>
+												Select the days the station is open
+											</FormDescription>
+										</div>
+										<div className='grid grid-cols-2 gap-3 sm:grid-cols-4'>
+											{DAYS_OF_WEEK.map((day) => (
+												<FormField
+													key={day}
+													control={form.control}
+													name='schedule.daysOpen'
+													render={({ field }) => {
+														return (
+															<FormItem
+																key={day}
+																className='flex flex-row items-start space-x-3 space-y-0'
+															>
+																<FormControl>
+																	<Checkbox
+																		checked={field.value?.includes(day)}
+																		onCheckedChange={(checked) => {
+																			return checked
+																				? field.onChange([...field.value, day])
+																				: field.onChange(
+																						field.value?.filter(
+																							(value) => value !== day,
+																						),
+																					);
+																		}}
+																	/>
+																</FormControl>
+																<FormLabel className='font-normal'>
+																	{day}
+																</FormLabel>
+															</FormItem>
+														);
+													}}
+												/>
+											))}
+										</div>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
+						</div>
+
+						<DialogFooter>
+							<Button
+								type='button'
+								variant='outline'
+								onClick={() => onOpenChange(false)}
+								disabled={createMutation.isPending}
+							>
+								Cancel
+							</Button>
+							<Button type='submit' disabled={createMutation.isPending}>
+								{createMutation.isPending ? 'Creating...' : 'Create Station'}
+							</Button>
+						</DialogFooter>
+					</form>
+				</Form>
+			</DialogContent>
+		</Dialog>
+	);
+}
