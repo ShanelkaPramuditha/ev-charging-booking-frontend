@@ -1,5 +1,11 @@
 import { useNavigate } from '@tanstack/react-router';
-import { BookOpen, Settings2, SquareTerminal, Zap } from 'lucide-react';
+import {
+	BookOpen,
+	Calendar,
+	Settings2,
+	SquareTerminal,
+	Zap,
+} from 'lucide-react';
 import type * as React from 'react';
 
 import { NavMain } from '@/components/partials/sidebar/nav-items';
@@ -26,6 +32,17 @@ const navItems = [
 			{
 				title: 'Overview',
 				url: '/dashboard',
+			},
+		],
+	},
+	{
+		title: 'Bookings',
+		url: '#',
+		icon: Calendar,
+		items: [
+			{
+				title: 'My Bookings',
+				url: '/bookings',
 			},
 		],
 	},
