@@ -43,14 +43,14 @@ export function EditStationDialog({
 		resolver: zodResolver(updateStationSchema),
 		defaultValues: {
 			name: station.name,
-			type: station.type,
+			type: station.type as 'DC Fast Charger' | 'AC Charger',
 			address: station.address,
 			location: {
 				latitude: station.location.latitude,
 				longitude: station.location.longitude,
 			},
-			contactPhone: station.contactPhone,
-			pricePerHour: station.pricePerHour || 0,
+			totalSlots: station.totalSlots,
+			contactPhone: station.contactPhone || '',
 		},
 	});
 
@@ -106,7 +106,7 @@ export function EditStationDialog({
 								name='type'
 								render={({ field }) => (
 									<FormItem>
-										<FormLabel>Station Type</FormLabel>
+										<FormLabel>Charger Type</FormLabel>
 										<FormControl>
 											<select
 												className='flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50'
@@ -114,9 +114,28 @@ export function EditStationDialog({
 											>
 												<option value='DC Fast Charger'>DC Fast Charger</option>
 												<option value='AC Charger'>AC Charger</option>
-												<option value='Level 2 Charger'>Level 2 Charger</option>
-												<option value='Supercharger'>Supercharger</option>
 											</select>
+										</FormControl>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
+
+							<FormField
+								control={form.control}
+								name='totalSlots'
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel>Total Charging Slots</FormLabel>
+										<FormControl>
+											<Input
+												type='number'
+												min='1'
+												{...field}
+												onChange={(e) =>
+													field.onChange(parseInt(e.target.value, 10))
+												}
+											/>
 										</FormControl>
 										<FormMessage />
 									</FormItem>
@@ -147,7 +166,11 @@ export function EditStationDialog({
 									<FormItem>
 										<FormLabel>Contact Phone</FormLabel>
 										<FormControl>
-											<Input placeholder='+94 77 123 4567' {...field} />
+											<Input
+												placeholder='0771234567'
+												maxLength={10}
+												{...field}
+											/>
 										</FormControl>
 										<FormMessage />
 									</FormItem>
@@ -204,23 +227,6 @@ export function EditStationDialog({
 									)}
 								/>
 							</div>
-						</div>
-
-						{/* Pricing */}
-						<div className='space-y-4'>
-							<FormField
-								control={form.control}
-								name='pricePerHour'
-								render={({ field }) => (
-									<FormItem>
-										<FormLabel>Price per Hour ($)</FormLabel>
-										<FormControl>
-											<Input type='number' min='0' step='0.01' {...field} />
-										</FormControl>
-										<FormMessage />
-									</FormItem>
-								)}
-							/>
 						</div>
 
 						<DialogFooter>
