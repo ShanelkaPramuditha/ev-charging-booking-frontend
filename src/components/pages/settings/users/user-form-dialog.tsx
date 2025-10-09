@@ -1,4 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 
 import { Button } from '@/components/ui/button';
@@ -31,13 +32,17 @@ import { Textarea } from '@/components/ui/textarea';
 import {
 	type CreateUserFormData,
 	createUserSchema,
+	type UpdateUserFormData,
+	updateUserSchema,
 } from '@/schemas/user.schema';
 import type { IUserProfile } from '@/types/user';
 
 interface UserFormDialogProps {
 	open: boolean;
 	onOpenChange: (open: boolean) => void;
-	onSubmit: (data: CreateUserFormData) => void;
+	onSubmit: (
+		data: CreateUserFormData | UpdateUserFormData,
+	) => Promise<void> | void;
 	isLoading?: boolean;
 	user?: IUserProfile | null;
 }
@@ -51,27 +56,57 @@ export function UserFormDialog({
 }: UserFormDialogProps) {
 	const isEdit = !!user;
 
-	const form = useForm<CreateUserFormData>({
-		resolver: zodResolver(createUserSchema),
+	const form = useForm<CreateUserFormData | UpdateUserFormData>({
+		resolver: zodResolver(isEdit ? updateUserSchema : createUserSchema),
 		defaultValues: {
-			username: user?.username || '',
-			email: user?.email || '',
-			role: user?.role || 'evOwner',
+			username: '',
+			email: '',
+			role: 'evOwner',
 			password: '',
-			phoneNumber: user?.phoneNumber || '',
-			address: user?.address || '',
+			phoneNumber: '',
+			address: '',
+			nic: '',
 		},
 	});
 
-	const handleSubmit = (data: CreateUserFormData) => {
-		onSubmit(data);
-		form.reset();
+	// Update form values when user data changes
+	useEffect(() => {
+		if (user) {
+			// Edit mode - no password field
+			form.reset({
+				username: user.username || '',
+				email: user.email || '',
+				role: user.role || 'evOwner',
+				phoneNumber: user.phoneNumber || '',
+				address: user.address || '',
+				nic: user.nic || '',
+			} as UpdateUserFormData);
+		} else {
+			// Create mode - includes password field
+			form.reset({
+				username: '',
+				email: '',
+				role: 'evOwner',
+				password: '',
+				phoneNumber: '',
+				address: '',
+				nic: '',
+			} as CreateUserFormData);
+		}
+	}, [user, form]);
+
+	const handleSubmit = async (
+		data: CreateUserFormData | UpdateUserFormData,
+	) => {
+		await onSubmit(data);
 	};
 
 	const handleClose = () => {
 		form.reset();
 		onOpenChange(false);
 	};
+
+	console.log(form.formState.errors);
 
 	return (
 		<Dialog open={open} onOpenChange={handleClose}>
@@ -154,6 +189,30 @@ export function UserFormDialog({
 							)}
 						/>
 
+						{/* NIC */}
+						{form.watch('role') === 'evOwner' && (
+							<FormField
+								control={form.control}
+								name='nic'
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel>NIC</FormLabel>
+										<FormControl>
+											<Input
+												placeholder='123456789V or 123456789012'
+												{...field}
+											/>
+										</FormControl>
+										<FormDescription>
+											Required for EV Owner. 12 digits or 9 digits ending with
+											V/v
+										</FormDescription>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
+						)}
+
 						{/* Password */}
 						{!isEdit && (
 							<FormField
@@ -183,7 +242,7 @@ export function UserFormDialog({
 							control={form.control}
 							name='phoneNumber'
 							render={({ field }) => (
-								<FormItem>
+								<FormItem hidden={true}>
 									<FormLabel>Phone Number (Optional)</FormLabel>
 									<FormControl>
 										<Input placeholder='+1234567890' {...field} />
@@ -198,7 +257,7 @@ export function UserFormDialog({
 							control={form.control}
 							name='address'
 							render={({ field }) => (
-								<FormItem>
+								<FormItem hidden={true}>
 									<FormLabel>Address (Optional)</FormLabel>
 									<FormControl>
 										<Textarea

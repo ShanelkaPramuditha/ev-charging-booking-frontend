@@ -42,7 +42,7 @@ export function Settings() {
 	};
 
 	return (
-		<div className='flex w-full max-w-7xl flex-col gap-6'>
+		<div className='flex w-full flex-col gap-6'>
 			<Tabs value={currentTab}>
 				{/* Tab list */}
 				<TabsList>

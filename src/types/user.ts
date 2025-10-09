@@ -9,6 +9,7 @@ export type UserRole = 'backOffice' | 'operator' | 'evOwner';
 export interface IUser {
 	id: string;
 	email: string;
+	nic?: string;
 	username: string;
 	image?: string | null;
 	createdAt: Date;
@@ -51,6 +52,7 @@ export interface ICreateUserRequest {
 	password: string;
 	phoneNumber?: string;
 	address?: string;
+	nic?: string;
 }
 
 /**
@@ -63,6 +65,7 @@ export interface IUpdateUserRequest {
 	address?: string;
 	role?: UserRole;
 	isActive?: boolean;
+	nic?: string;
 }
 
 /**

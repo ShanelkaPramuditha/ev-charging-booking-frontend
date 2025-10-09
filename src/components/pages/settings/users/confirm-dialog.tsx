@@ -42,9 +42,7 @@ export function ConfirmDialog({
 					<AlertDialogAction
 						onClick={onConfirm}
 						className={
-							isDestructive
-								? 'bg-destructive text-destructive-foreground hover:bg-destructive/90'
-								: ''
+							isDestructive ? 'bg-destructive hover:bg-destructive/90' : ''
 						}
 					>
 						{confirmText}
