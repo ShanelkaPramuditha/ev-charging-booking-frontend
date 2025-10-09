@@ -139,7 +139,7 @@ export function UserTable({
 							<TableHead className='text-center'>NIC</TableHead>
 							<TableHead className='text-center'>Role</TableHead>
 							<TableHead className='text-center'>Status</TableHead>
-							<TableHead>Phone</TableHead>
+							{/* <TableHead>Phone</TableHead> */}
 							<TableHead>Created At</TableHead>
 							<TableHead className='text-right'>Actions</TableHead>
 						</TableRow>
@@ -196,7 +196,7 @@ export function UserTable({
 											{user.isActive ? 'Active' : 'Inactive'}
 										</Badge>
 									</TableCell>
-									<TableCell>{user.phoneNumber || 'N/A'}</TableCell>
+									{/* <TableCell>{user.phoneNumber || 'N/A'}</TableCell> */}
 									<TableCell>{formatDate(user.createdAt)}</TableCell>
 									<TableCell className='text-right'>
 										<DropdownMenu>
