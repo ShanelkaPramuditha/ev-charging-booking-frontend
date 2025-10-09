@@ -80,12 +80,6 @@ export function LoginForm({
 							<FormItem>
 								<div className='flex items-center'>
 									<FormLabel>Password</FormLabel>
-									<Link
-										to='/'
-										className='ml-auto text-sm underline-offset-4 hover:underline'
-									>
-										Forgot your password?
-									</Link>
 								</div>
 								<FormControl>
 									<Input
@@ -109,7 +103,7 @@ export function LoginForm({
 
 					<div className='after:border-border relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t'>
 						<span className='bg-background text-muted-foreground relative z-10 px-2'>
-							Or continue with
+							Or
 						</span>
 					</div>
 				</div>

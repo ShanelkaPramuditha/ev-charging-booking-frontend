@@ -1,11 +1,5 @@
 import { useNavigate } from '@tanstack/react-router';
-import {
-	BookOpen,
-	Calendar,
-	Settings2,
-	SquareTerminal,
-	Zap,
-} from 'lucide-react';
+import { Calendar, Settings2, SquareTerminal, Zap } from 'lucide-react';
 import type * as React from 'react';
 
 import { NavMain } from '@/components/partials/sidebar/nav-items';
@@ -25,15 +19,9 @@ import { useLogout } from '@/queries/auth.queries';
 const navItems = [
 	{
 		title: 'Dashboard',
-		url: '#',
+		url: '/dashboard',
 		icon: SquareTerminal,
 		isActive: true,
-		items: [
-			{
-				title: 'Overview',
-				url: '/dashboard',
-			},
-		],
 	},
 	{
 		title: 'Bookings',
@@ -54,29 +42,6 @@ const navItems = [
 			{
 				title: 'All Stations',
 				url: '/stations',
-			},
-		],
-	},
-	{
-		title: 'Documentation',
-		url: '#',
-		icon: BookOpen,
-		items: [
-			{
-				title: 'Introduction',
-				url: '#',
-			},
-			{
-				title: 'Get Started',
-				url: '#',
-			},
-			{
-				title: 'Tutorials',
-				url: '#',
-			},
-			{
-				title: 'Changelog',
-				url: '#',
 			},
 		],
 	},

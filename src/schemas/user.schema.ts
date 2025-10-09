@@ -26,9 +26,9 @@ const phoneSchema = z
 	.or(z.literal(''));
 
 /**
- * Zod schema for creating a new user
+ * Base user schema (without refinement, so it can be extended)
  */
-export const createUserSchema = z.object({
+const baseUserSchema = z.object({
 	username: z
 		.string()
 		.min(1, 'Username is required')
@@ -52,57 +52,123 @@ export const createUserSchema = z.object({
 		.max(500, 'Address must not exceed 500 characters')
 		.optional()
 		.or(z.literal('')),
+	nic: z.string().optional().or(z.literal('')),
+});
+
+/**
+ * Zod schema for creating a new user
+ */
+export const createUserSchema = baseUserSchema.superRefine((data, ctx) => {
+	// NIC is required for evOwner role
+	if (data.role === 'evOwner') {
+		if (!data.nic || data.nic.trim() === '') {
+			ctx.addIssue({
+				code: z.ZodIssueCode.custom,
+				message: 'NIC is required for EV Owner role',
+				path: ['nic'],
+			});
+		} else {
+			// Validate NIC format
+			const nicRegex = /^(\d{12}|\d{9}[vV])$/;
+			if (!nicRegex.test(data.nic)) {
+				ctx.addIssue({
+					code: z.ZodIssueCode.custom,
+					message: 'NIC must be either 12 digits or 9 digits ending with V/v',
+					path: ['nic'],
+				});
+			}
+		}
+	}
 });
 
 /**
  * Zod schema for updating a user
  */
-export const updateUserSchema = z.object({
-	username: z
-		.string()
-		.min(2, 'Username must be at least 2 characters')
-		.max(100, 'Username must not exceed 100 characters')
-		.trim()
-		.optional(),
-	email: z
-		.string()
-		.email('Invalid email format')
-		.toLowerCase()
-		.trim()
-		.optional(),
-	role: userRoleSchema.optional(),
-	phoneNumber: phoneSchema,
-	address: z
-		.string()
-		.max(500, 'Address must not exceed 500 characters')
-		.optional()
-		.or(z.literal('')),
-	status: userStatusSchema.optional(),
-});
+export const updateUserSchema = z
+	.object({
+		username: z
+			.string()
+			.min(2, 'Username must be at least 2 characters')
+			.max(100, 'Username must not exceed 100 characters')
+			.trim(),
+		email: z.string().email('Invalid email format').toLowerCase().trim(),
+		role: userRoleSchema,
+		phoneNumber: phoneSchema,
+		address: z
+			.string()
+			.max(500, 'Address must not exceed 500 characters')
+			.optional()
+			.or(z.literal('')),
+		nic: z.string().optional().or(z.literal('')),
+		status: userStatusSchema.optional(),
+	})
+	.superRefine((data, ctx) => {
+		// NIC is required for evOwner role
+		if (data.role === 'evOwner') {
+			if (!data.nic || data.nic.trim() === '') {
+				ctx.addIssue({
+					code: z.ZodIssueCode.custom,
+					message: 'NIC is required for EV Owner role',
+					path: ['nic'],
+				});
+			} else {
+				// Validate NIC format
+				const nicRegex = /^(\d{12}|\d{9}[vV])$/;
+				if (!nicRegex.test(data.nic)) {
+					ctx.addIssue({
+						code: z.ZodIssueCode.custom,
+						message: 'NIC must be either 12 digits or 9 digits ending with V/v',
+						path: ['nic'],
+					});
+				}
+			}
+		}
+	});
 
 /**
  * Zod schema for EV Owner profile
  */
-export const evOwnerProfileSchema = createUserSchema.extend({
-	role: z.literal('evOwner'),
-	vehicleInfo: z
-		.object({
-			make: z.string().optional(),
-			model: z.string().optional(),
-			year: z
-				.number()
-				.min(1900, 'Invalid year')
-				.max(new Date().getFullYear() + 1, 'Invalid year')
-				.optional(),
-			licensePlate: z.string().optional(),
-			batteryCapacity: z
-				.number()
-				.positive('Must be a positive number')
-				.optional(),
-		})
-		.optional(),
-	preferredPaymentMethod: z.string().optional(),
-});
+export const evOwnerProfileSchema = baseUserSchema
+	.extend({
+		role: z.literal('evOwner'),
+		vehicleInfo: z
+			.object({
+				make: z.string().optional(),
+				model: z.string().optional(),
+				year: z
+					.number()
+					.min(1900, 'Invalid year')
+					.max(new Date().getFullYear() + 1, 'Invalid year')
+					.optional(),
+				licensePlate: z.string().optional(),
+				batteryCapacity: z
+					.number()
+					.positive('Must be a positive number')
+					.optional(),
+			})
+			.optional(),
+		preferredPaymentMethod: z.string().optional(),
+	})
+	.superRefine((data, ctx) => {
+		// NIC is required for evOwner
+		if (!data.nic || data.nic.trim() === '') {
+			ctx.addIssue({
+				code: z.ZodIssueCode.custom,
+				message: 'NIC is required for EV Owner',
+				path: ['nic'],
+			});
+		} else {
+			// Validate NIC format
+			const nicRegex = /^(\d{12}|\d{9}[vV])$/;
+			if (!nicRegex.test(data.nic)) {
+				ctx.addIssue({
+					code: z.ZodIssueCode.custom,
+					message: 'NIC must be either 12 digits or 9 digits ending with V/v',
+					path: ['nic'],
+				});
+			}
+		}
+	});
 
 /**
  * Zod schema for user filters

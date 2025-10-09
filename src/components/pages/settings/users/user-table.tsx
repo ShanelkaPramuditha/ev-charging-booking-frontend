@@ -136,8 +136,9 @@ export function UserTable({
 						<TableRow>
 							<TableHead>Username</TableHead>
 							<TableHead>Email</TableHead>
-							<TableHead className='w-32 text-center'>Role</TableHead>
-							<TableHead className='w-32 text-center'>Status</TableHead>
+							<TableHead className='text-center'>NIC</TableHead>
+							<TableHead className='text-center'>Role</TableHead>
+							<TableHead className='text-center'>Status</TableHead>
 							<TableHead>Phone</TableHead>
 							<TableHead>Created At</TableHead>
 							<TableHead className='text-right'>Actions</TableHead>
@@ -161,7 +162,10 @@ export function UserTable({
 								<TableRow key={user.id}>
 									<TableCell className='font-medium'>{user.username}</TableCell>
 									<TableCell>{user.email}</TableCell>
-									<TableCell className='w-32 text-center'>
+									<TableCell className='text-center'>
+										{user.nic || 'N/A'}
+									</TableCell>
+									<TableCell className='text-center'>
 										<Badge
 											variant='outline'
 											className={cn(
@@ -175,7 +179,7 @@ export function UserTable({
 											{getRoleLabel(user.role)}
 										</Badge>
 									</TableCell>
-									<TableCell className='w-32 text-center'>
+									<TableCell className='text-center'>
 										<Badge
 											variant={user.isActive ? 'default' : 'secondary'}
 											className={cn(

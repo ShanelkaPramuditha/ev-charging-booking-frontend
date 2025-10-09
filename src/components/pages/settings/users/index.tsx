@@ -1,3 +1,4 @@
+import { isAxiosError } from 'axios';
 import { UserPlus } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
@@ -17,7 +18,10 @@ import {
 	useUpdateUser,
 	useUsers,
 } from '@/queries/user.queries';
-import type { CreateUserFormData } from '@/schemas/user.schema';
+import type {
+	CreateUserFormData,
+	UpdateUserFormData,
+} from '@/schemas/user.schema';
 import type { IUserProfile, UserRole } from '@/types/user';
 
 import { ConfirmDialog } from './confirm-dialog';
@@ -72,37 +76,53 @@ export function UserManagement() {
 		setIsStatusDialogOpen(true);
 	};
 
-	const handleFormSubmit = async (data: CreateUserFormData) => {
+	const handleFormSubmit = async (
+		data: CreateUserFormData | UpdateUserFormData,
+	) => {
 		try {
 			if (selectedUser) {
 				// Update existing user
+				const updateData = data as UpdateUserFormData;
 				await updateUserMutation.mutateAsync({
 					id: selectedUser.id,
 					userData: {
-						username: data.username,
-						email: data.email,
-						role: data.role,
-						phoneNumber: data.phoneNumber,
-						address: data.address,
+						username: updateData.username,
+						email: updateData.email,
+						role: updateData.role,
+						phoneNumber: updateData.phoneNumber,
+						address: updateData.address,
+						nic: updateData.nic,
 					},
 				});
 				toast.success('User updated successfully');
 			} else {
 				// Create new user
-				await createUserMutation.mutateAsync(data);
+				const createData = data as CreateUserFormData;
+				await createUserMutation.mutateAsync(createData);
 				toast.success('User created successfully');
 			}
+			// Only close and reset on success
 			setIsFormOpen(false);
 			setSelectedUser(null);
-		} catch (error) {
-			const errorMessage =
-				error instanceof Error ? error.message : 'An error occurred';
-			toast.error(
-				selectedUser ? 'Failed to update user' : 'Failed to create user',
-				{
-					description: errorMessage,
-				},
-			);
+		} catch (error: unknown) {
+			// Handle 400 Bad Request error (user already exists)
+			if (isAxiosError(error) && error.response?.status === 400) {
+				toast.error('User Already Exists!', {
+					description:
+						'A user with this email/ NIC already exists in the system.',
+				});
+			} else {
+				const errorMessage =
+					error instanceof Error ? error.message : 'An error occurred';
+				toast.error(
+					selectedUser ? 'Failed to update user' : 'Failed to create user',
+					{
+						description: errorMessage,
+					},
+				);
+			}
+			// Re-throw to prevent form from closing
+			throw error;
 		}
 	};
 
