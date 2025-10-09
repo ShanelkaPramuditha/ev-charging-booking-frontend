@@ -1,5 +1,5 @@
 import { useNavigate } from '@tanstack/react-router';
-import { BookOpen, Bot, Settings2, SquareTerminal } from 'lucide-react';
+import { Calendar, Settings2, SquareTerminal, Zap } from 'lucide-react';
 import type * as React from 'react';
 
 import { NavMain } from '@/components/partials/sidebar/nav-items';
@@ -18,64 +18,30 @@ import { useLogout } from '@/queries/auth.queries';
 
 const navItems = [
 	{
-		title: 'Playground',
-		url: '#',
+		title: 'Dashboard',
+		url: '/dashboard',
 		icon: SquareTerminal,
 		isActive: true,
+	},
+	{
+		title: 'Bookings',
+		url: '#',
+		icon: Calendar,
 		items: [
 			{
-				title: 'History',
-				url: '#',
-			},
-			{
-				title: 'Starred',
-				url: '#',
-			},
-			{
-				title: 'Settings',
-				url: '#',
+				title: 'My Bookings',
+				url: '/bookings',
 			},
 		],
 	},
 	{
-		title: 'Models',
+		title: 'Stations',
 		url: '#',
-		icon: Bot,
+		icon: Zap,
 		items: [
 			{
-				title: 'Genesis',
-				url: '#',
-			},
-			{
-				title: 'Explorer',
-				url: '#',
-			},
-			{
-				title: 'Quantum',
-				url: '#',
-			},
-		],
-	},
-	{
-		title: 'Documentation',
-		url: '#',
-		icon: BookOpen,
-		items: [
-			{
-				title: 'Introduction',
-				url: '#',
-			},
-			{
-				title: 'Get Started',
-				url: '#',
-			},
-			{
-				title: 'Tutorials',
-				url: '#',
-			},
-			{
-				title: 'Changelog',
-				url: '#',
+				title: 'All Stations',
+				url: '/stations',
 			},
 		],
 	},
@@ -85,20 +51,16 @@ const navItems = [
 		icon: Settings2,
 		items: [
 			{
+				title: 'Account',
+				url: '/settings?tab=account',
+			},
+			{
 				title: 'General',
-				url: '#',
+				url: '/settings?tab=general',
 			},
 			{
-				title: 'Team',
-				url: '#',
-			},
-			{
-				title: 'Billing',
-				url: '#',
-			},
-			{
-				title: 'Limits',
-				url: '#',
+				title: 'Users',
+				url: '/settings?tab=users',
 			},
 		],
 	},
