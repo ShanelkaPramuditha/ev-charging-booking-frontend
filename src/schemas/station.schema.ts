@@ -23,17 +23,26 @@ export const stationScheduleSchema = z.object({
 });
 
 /**
+ * Station type enum
+ */
+export const stationTypeEnum = z.enum(['DC Fast Charger', 'AC Charger'], {
+	message: 'Please select a valid station type',
+});
+
+/**
  * Create station schema
  */
 export const createStationSchema = z.object({
 	name: z.string().min(1, 'Station name is required'),
 	operatorId: z.string().min(1, 'Operator ID is required'),
 	location: stationLocationSchema,
-	type: z.string().min(1, 'Station type is required'),
+	type: stationTypeEnum,
 	totalSlots: z.number().min(1, 'Must have at least 1 slot'),
 	address: z.string().min(1, 'Address is required'),
-	contactPhone: z.string().optional(),
-	pricePerHour: z.number().min(0, 'Price must be positive').optional(),
+	contactPhone: z
+		.string()
+		.regex(/^\d{10}$/, 'Contact phone must be exactly 10 digits')
+		.optional(),
 	schedule: z
 		.array(stationScheduleSchema)
 		.min(1, 'At least one schedule is required'),
@@ -43,21 +52,21 @@ export const createStationSchema = z.object({
  * Update station schema
  */
 export const updateStationSchema = z.object({
-	name: z.string().min(1, 'Station name is required').optional(),
-	location: stationLocationSchema.optional(),
-	type: z.string().min(1, 'Station type is required').optional(),
-	address: z.string().min(1, 'Address is required').optional(),
-	contactPhone: z.string().optional(),
-	pricePerHour: z.number().min(0, 'Price must be positive').optional(),
+	name: z.string().min(1, 'Station name is required'),
+	location: stationLocationSchema,
+	type: stationTypeEnum,
+	totalSlots: z.number().min(1, 'Must have at least 1 slot'),
+	address: z.string().min(1, 'Address is required'),
+	contactPhone: z
+		.string()
+		.regex(/^\d{10}$/, 'Contact phone must be exactly 10 digits'),
 });
 
 /**
  * Update slots schema
  */
 export const updateSlotsSchema = z.object({
-	availableSlots: z.coerce
-		.number()
-		.min(0, 'Available slots cannot be negative'),
+	availableSlots: z.number().min(0, 'Available slots cannot be negative'),
 });
 
 /**

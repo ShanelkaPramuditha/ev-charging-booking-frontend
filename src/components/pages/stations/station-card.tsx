@@ -1,4 +1,4 @@
-import { Clock, DollarSign, MapPin, MoreVertical, Plug } from 'lucide-react';
+import { Clock, MapPin, MoreVertical, Plug } from 'lucide-react';
 import { useState } from 'react';
 
 import { Badge } from '@/components/ui/badge';
@@ -142,12 +142,6 @@ export function StationCard({ station }: StationCardProps) {
 					</div>
 
 					<div className='space-y-2 text-sm'>
-						{station.pricePerHour && (
-							<div className='flex items-center gap-2'>
-								<DollarSign className='text-muted-foreground h-4 w-4' />
-								<span>${station.pricePerHour.toFixed(2)}/hour</span>
-							</div>
-						)}
 						<div className='flex items-center gap-2'>
 							<Clock className='text-muted-foreground h-4 w-4' />
 							<span>{operatingHours}</span>

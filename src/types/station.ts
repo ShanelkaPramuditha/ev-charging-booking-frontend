@@ -11,14 +11,13 @@ export interface IStation {
 		latitude: number;
 		longitude: number;
 	};
-	type: string; // "DC Fast Charger", etc.
+	type: string; // "DC Fast Charger" or "AC Charger"
 	totalSlots: number;
 	availableSlots: number;
 	schedule: IStationSchedule[];
 	isActive: boolean;
 	address: string;
 	contactPhone?: string;
-	pricePerHour?: number; // Optional since API doesn't return it
 	createdAt: string;
 	updatedAt: string;
 }
@@ -29,9 +28,9 @@ export interface IStationLocation {
 }
 
 export interface IStationSchedule {
-	dayOfWeek: number; // 1-7 (Monday to Sunday)
-	openTime: string; // HH:mm format
-	closeTime: string; // HH:mm format
+	dayOfWeek: number; // 1-7 (Monday to Sunday, where 1 = Monday)
+	openTime: string; // HH:mm format (e.g., "08:00")
+	closeTime: string; // HH:mm format (e.g., "20:00")
 	isOpen: boolean;
 }
 
@@ -49,16 +48,15 @@ export interface CreateStationRequest {
 	address: string;
 	contactPhone?: string;
 	schedule: IStationSchedule[];
-	pricePerHour?: number;
 }
 
 export interface UpdateStationRequest {
-	name?: string;
-	location?: IStationLocation;
-	type?: string;
-	address?: string;
-	contactPhone?: string;
-	pricePerHour?: number;
+	name: string;
+	location: IStationLocation;
+	type: string;
+	totalSlots: number;
+	address: string;
+	contactPhone: string;
 }
 
 export interface UpdateStationSlotsRequest {

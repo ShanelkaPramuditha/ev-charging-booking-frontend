@@ -58,14 +58,13 @@ export function CreateStationDialog({
 			name: '',
 			operatorId: '',
 			location: {
-				latitude: 0,
-				longitude: 0,
+				latitude: 6.9271, // Default to Colombo
+				longitude: 79.8612,
 			},
 			type: 'DC Fast Charger',
 			totalSlots: 4,
 			address: '',
 			contactPhone: '',
-			pricePerHour: 5.0,
 			schedule: DAYS_OF_WEEK.map((_, index) => ({
 				dayOfWeek: index + 1,
 				openTime: '08:00',
@@ -238,7 +237,11 @@ export function CreateStationDialog({
 										<FormItem>
 											<FormLabel>Contact Phone (Optional)</FormLabel>
 											<FormControl>
-												<Input placeholder='+94 77 123 4567' {...field} />
+												<Input
+													placeholder='0771234567'
+													maxLength={10}
+													{...field}
+												/>
 											</FormControl>
 											<FormMessage />
 										</FormItem>
@@ -247,41 +250,32 @@ export function CreateStationDialog({
 							</div>
 						</div>
 
-						{/* Pricing & Capacity */}
+						{/* Capacity */}
 						<div className='space-y-4'>
-							<h3 className='font-semibold'>Pricing & Capacity</h3>
-							<div className='grid gap-4 sm:grid-cols-2'>
-								<FormField
-									control={form.control}
-									name='totalSlots'
-									render={({ field }) => (
-										<FormItem>
-											<FormLabel>Total Charging Slots</FormLabel>
-											<FormControl>
-												<Input type='number' min='1' {...field} />
-											</FormControl>
-											<FormDescription>
-												Number of charging points available
-											</FormDescription>
-											<FormMessage />
-										</FormItem>
-									)}
-								/>
-								<FormField
-									control={form.control}
-									name='pricePerHour'
-									render={({ field }) => (
-										<FormItem>
-											<FormLabel>Price per Hour ($)</FormLabel>
-											<FormControl>
-												<Input type='number' min='0' step='0.01' {...field} />
-											</FormControl>
-											<FormDescription>Hourly charging rate</FormDescription>
-											<FormMessage />
-										</FormItem>
-									)}
-								/>
-							</div>
+							<h3 className='font-semibold'>Capacity</h3>
+							<FormField
+								control={form.control}
+								name='totalSlots'
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel>Total Charging Slots</FormLabel>
+										<FormControl>
+											<Input
+												type='number'
+												min='1'
+												{...field}
+												onChange={(e) =>
+													field.onChange(parseInt(e.target.value, 10))
+												}
+											/>
+										</FormControl>
+										<FormDescription>
+											Number of charging points available at this station
+										</FormDescription>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
 						</div>
 
 						{/* Schedule */}
