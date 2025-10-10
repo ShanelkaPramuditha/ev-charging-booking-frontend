@@ -10,6 +10,16 @@ import {
 	CardHeader,
 } from '@/components/ui/card';
 import {
+	AlertDialog,
+	AlertDialogAction,
+	AlertDialogCancel,
+	AlertDialogContent,
+	AlertDialogDescription,
+	AlertDialogFooter,
+	AlertDialogHeader,
+	AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
+import {
 	DropdownMenu,
 	DropdownMenuContent,
 	DropdownMenuItem,
@@ -33,6 +43,7 @@ interface StationCardProps {
 export function StationCard({ station }: StationCardProps) {
 	const { user } = useAuth();
 	const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+	const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 	const updateStatusMutation = useUpdateStationStatus();
 	const deleteStationMutation = useDeleteStation();
 
@@ -49,14 +60,13 @@ export function StationCard({ station }: StationCardProps) {
 		});
 	};
 
+	const handleDeleteConfirm = () => {
+		deleteStationMutation.mutate(station.id);
+		setIsDeleteDialogOpen(false);
+	};
+
 	const handleDelete = () => {
-		if (
-			confirm(
-				`Are you sure you want to delete "${station.name}"? This action cannot be undone.`,
-			)
-		) {
-			deleteStationMutation.mutate(station.id);
-		}
+		setIsDeleteDialogOpen(true);
 	};
 
 	const availabilityPercentage =
@@ -173,6 +183,31 @@ export function StationCard({ station }: StationCardProps) {
 					onOpenChange={setIsEditDialogOpen}
 				/>
 			)}
+
+			{/* Delete Confirmation Dialog */}
+			<AlertDialog
+				open={isDeleteDialogOpen}
+				onOpenChange={setIsDeleteDialogOpen}
+			>
+				<AlertDialogContent>
+					<AlertDialogHeader>
+						<AlertDialogTitle>Are you sure?</AlertDialogTitle>
+						<AlertDialogDescription>
+							This action will permanently delete the station "{station.name}".
+							This action cannot be undone and may affect existing bookings.
+						</AlertDialogDescription>
+					</AlertDialogHeader>
+					<AlertDialogFooter>
+						<AlertDialogCancel>Cancel</AlertDialogCancel>
+						<AlertDialogAction
+							className='bg-destructive hover:bg-destructive/90'
+							onClick={handleDeleteConfirm}
+						>
+							Delete
+						</AlertDialogAction>
+					</AlertDialogFooter>
+				</AlertDialogContent>
+			</AlertDialog>
 		</>
 	);
 }
