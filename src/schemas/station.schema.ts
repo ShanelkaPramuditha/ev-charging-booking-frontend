@@ -53,6 +53,7 @@ export const createStationSchema = z.object({
  */
 export const updateStationSchema = z.object({
 	name: z.string().min(1, 'Station name is required'),
+	operatorId: z.string().min(1, 'Operator ID is required'),
 	location: stationLocationSchema,
 	type: stationTypeEnum,
 	totalSlots: z.number().min(1, 'Must have at least 1 slot'),

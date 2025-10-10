@@ -1,5 +1,5 @@
+import { useNavigate } from '@tanstack/react-router';
 import { Clock, MapPin, MoreVertical, Plug } from 'lucide-react';
-import { useState } from 'react';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -17,6 +17,7 @@ import {
 	DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { useAuth } from '@/context/auth/use-auth';
+import { cn } from '@/lib/utils';
 import {
 	useDeleteStation,
 	useUpdateStationStatus,
@@ -24,15 +25,13 @@ import {
 import type { IStation } from '@/types/station';
 import type { IUserProfile } from '@/types/user';
 
-import { EditStationDialog } from './edit-station-dialog';
-
 interface StationCardProps {
 	station: IStation;
 }
 
 export function StationCard({ station }: StationCardProps) {
+	const navigate = useNavigate();
 	const { user } = useAuth();
-	const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
 	const updateStatusMutation = useUpdateStationStatus();
 	const deleteStationMutation = useDeleteStation();
 
@@ -41,6 +40,20 @@ export function StationCard({ station }: StationCardProps) {
 	const isOperator =
 		userProfile?.role === 'operator' && userProfile?.id === station.operatorId;
 	const canEdit = isBackoffice || isOperator;
+
+	const handleViewDetails = () => {
+		navigate({
+			to: '/stations/$stationId',
+			params: { stationId: station.id },
+		});
+	};
+
+	const handleEdit = () => {
+		navigate({
+			to: '/stations/$stationId/edit',
+			params: { stationId: station.id },
+		});
+	};
 
 	const handleToggleStatus = () => {
 		updateStatusMutation.mutate({
@@ -88,7 +101,15 @@ export function StationCard({ station }: StationCardProps) {
 						</p>
 					</div>
 					<div className='flex items-center gap-2'>
-						<Badge variant={station.isActive ? 'default' : 'secondary'}>
+						<Badge
+							variant={station.isActive ? 'default' : 'secondary'}
+							className={cn(
+								'text-base px-3 py-1',
+								station.isActive
+									? 'bg-green-100 text-green-800'
+									: 'bg-red-100 text-red-800',
+							)}
+						>
 							{station.isActive ? 'Active' : 'Inactive'}
 						</Badge>
 						{canEdit && (
@@ -100,7 +121,7 @@ export function StationCard({ station }: StationCardProps) {
 									</Button>
 								</DropdownMenuTrigger>
 								<DropdownMenuContent align='end'>
-									<DropdownMenuItem onClick={() => setIsEditDialogOpen(true)}>
+									<DropdownMenuItem onClick={handleEdit}>
 										Edit Details
 									</DropdownMenuItem>
 									{isBackoffice && (
@@ -159,20 +180,22 @@ export function StationCard({ station }: StationCardProps) {
 					)}
 				</CardContent>
 
-				<CardFooter>
-					<Button variant='outline' className='w-full'>
+				<CardFooter className='flex-col gap-2'>
+					{station.operator && (
+						<div className='text-muted-foreground w-full text-xs'>
+							<span className='font-medium'>Operator:</span>{' '}
+							{station.operator.username}
+						</div>
+					)}
+					<Button
+						variant='outline'
+						className='w-full'
+						onClick={handleViewDetails}
+					>
 						View Details
 					</Button>
 				</CardFooter>
 			</Card>
-
-			{isEditDialogOpen && (
-				<EditStationDialog
-					station={station}
-					open={isEditDialogOpen}
-					onOpenChange={setIsEditDialogOpen}
-				/>
-			)}
 		</>
 	);
 }
