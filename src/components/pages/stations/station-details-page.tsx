@@ -27,6 +27,7 @@ import { useStation } from '@/queries/station.queries';
 import type { IUserProfile } from '@/types/user';
 
 import { ManageScheduleDialog } from './manage-schedule-dialog';
+import { ManageSlotsDialog } from './manage-slots-dialog';
 
 const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
@@ -38,6 +39,7 @@ export function StationDetailsPage() {
 	const { user } = useAuth();
 	const { data: station, isLoading } = useStation(stationId);
 	const [scheduleDialogOpen, setScheduleDialogOpen] = useState(false);
+	const [slotsDialogOpen, setSlotsDialogOpen] = useState(false);
 
 	const userProfile = user as IUserProfile;
 	const isBackoffice = userProfile?.role === 'backOffice';
@@ -214,6 +216,16 @@ export function StationDetailsPage() {
 										Manage Schedule
 									</Button>
 								)}
+								{canEdit && (
+									<Button
+										variant='outline'
+										size='sm'
+										onClick={() => setSlotsDialogOpen(true)}
+									>
+										<Plug className='mr-2 h-4 w-4' />
+										Manage Slots
+									</Button>
+								)}
 							</div>
 						</CardHeader>
 						<CardContent>
@@ -278,12 +290,20 @@ export function StationDetailsPage() {
 
 			{/* Schedule Management Dialog */}
 			{station && (
-				<ManageScheduleDialog
-					open={scheduleDialogOpen}
-					onOpenChange={setScheduleDialogOpen}
-					stationId={stationId}
-					currentSchedule={station.schedule || []}
-				/>
+				<>
+					<ManageScheduleDialog
+						open={scheduleDialogOpen}
+						onOpenChange={setScheduleDialogOpen}
+						stationId={stationId}
+						currentSchedule={station.schedule || []}
+					/>
+					<ManageSlotsDialog
+						open={slotsDialogOpen}
+						onOpenChange={setSlotsDialogOpen}
+						stationId={stationId}
+						currentSlots={station.availableSlots}
+					/>
+				</>
 			)}
 		</div>
 	);
