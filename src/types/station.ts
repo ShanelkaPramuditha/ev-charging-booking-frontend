@@ -2,11 +2,18 @@
  * Station type definitions
  */
 
+export interface IOperator {
+	id: string;
+	username: string;
+	email: string;
+	isActive: boolean;
+}
+
 export interface IStation {
 	id: string;
 	name: string;
 	operatorId: string;
-	operatorName?: string;
+	operator?: IOperator; // Populated operator object
 	location: {
 		latitude: number;
 		longitude: number;
@@ -52,6 +59,7 @@ export interface CreateStationRequest {
 
 export interface UpdateStationRequest {
 	name: string;
+	operatorId: string;
 	location: IStationLocation;
 	type: string;
 	totalSlots: number;

@@ -1,5 +1,5 @@
+import { useNavigate } from '@tanstack/react-router';
 import { Clock, MapPin, MoreVertical, Plug } from 'lucide-react';
-import { useState } from 'react';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -10,16 +10,6 @@ import {
 	CardHeader,
 } from '@/components/ui/card';
 import {
-	AlertDialog,
-	AlertDialogAction,
-	AlertDialogCancel,
-	AlertDialogContent,
-	AlertDialogDescription,
-	AlertDialogFooter,
-	AlertDialogHeader,
-	AlertDialogTitle,
-} from '@/components/ui/alert-dialog';
-import {
 	DropdownMenu,
 	DropdownMenuContent,
 	DropdownMenuItem,
@@ -27,6 +17,7 @@ import {
 	DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { useAuth } from '@/context/auth/use-auth';
+import { cn } from '@/lib/utils';
 import {
 	useDeleteStation,
 	useUpdateStationStatus,
@@ -34,16 +25,13 @@ import {
 import type { IStation } from '@/types/station';
 import type { IUserProfile } from '@/types/user';
 
-import { EditStationDialog } from './edit-station-dialog';
-
 interface StationCardProps {
 	station: IStation;
 }
 
 export function StationCard({ station }: StationCardProps) {
+	const navigate = useNavigate();
 	const { user } = useAuth();
-	const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
-	const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 	const updateStatusMutation = useUpdateStationStatus();
 	const deleteStationMutation = useDeleteStation();
 
@@ -53,6 +41,20 @@ export function StationCard({ station }: StationCardProps) {
 		userProfile?.role === 'operator' && userProfile?.id === station.operatorId;
 	const canEdit = isBackoffice || isOperator;
 
+	const handleViewDetails = () => {
+		navigate({
+			to: '/stations/$stationId',
+			params: { stationId: station.id },
+		});
+	};
+
+	const handleEdit = () => {
+		navigate({
+			to: '/stations/$stationId/edit',
+			params: { stationId: station.id },
+		});
+	};
+
 	const handleToggleStatus = () => {
 		updateStatusMutation.mutate({
 			id: station.id,
@@ -60,13 +62,14 @@ export function StationCard({ station }: StationCardProps) {
 		});
 	};
 
-	const handleDeleteConfirm = () => {
-		deleteStationMutation.mutate(station.id);
-		setIsDeleteDialogOpen(false);
-	};
-
 	const handleDelete = () => {
-		setIsDeleteDialogOpen(true);
+		if (
+			confirm(
+				`Are you sure you want to delete "${station.name}"? This action cannot be undone.`,
+			)
+		) {
+			deleteStationMutation.mutate(station.id);
+		}
 	};
 
 	const availabilityPercentage =
@@ -98,7 +101,15 @@ export function StationCard({ station }: StationCardProps) {
 						</p>
 					</div>
 					<div className='flex items-center gap-2'>
-						<Badge variant={station.isActive ? 'default' : 'secondary'}>
+						<Badge
+							variant={station.isActive ? 'default' : 'secondary'}
+							className={cn(
+								'text-base px-3 py-1',
+								station.isActive
+									? 'bg-green-100 text-green-800'
+									: 'bg-red-100 text-red-800',
+							)}
+						>
 							{station.isActive ? 'Active' : 'Inactive'}
 						</Badge>
 						{canEdit && (
@@ -110,7 +121,7 @@ export function StationCard({ station }: StationCardProps) {
 									</Button>
 								</DropdownMenuTrigger>
 								<DropdownMenuContent align='end'>
-									<DropdownMenuItem onClick={() => setIsEditDialogOpen(true)}>
+									<DropdownMenuItem onClick={handleEdit}>
 										Edit Details
 									</DropdownMenuItem>
 									{isBackoffice && (
@@ -169,45 +180,22 @@ export function StationCard({ station }: StationCardProps) {
 					)}
 				</CardContent>
 
-				<CardFooter>
-					<Button variant='outline' className='w-full'>
+				<CardFooter className='flex-col gap-2'>
+					{station.operator && (
+						<div className='text-muted-foreground w-full text-xs'>
+							<span className='font-medium'>Operator:</span>{' '}
+							{station.operator.username}
+						</div>
+					)}
+					<Button
+						variant='outline'
+						className='w-full'
+						onClick={handleViewDetails}
+					>
 						View Details
 					</Button>
 				</CardFooter>
 			</Card>
-
-			{isEditDialogOpen && (
-				<EditStationDialog
-					station={station}
-					open={isEditDialogOpen}
-					onOpenChange={setIsEditDialogOpen}
-				/>
-			)}
-
-			{/* Delete Confirmation Dialog */}
-			<AlertDialog
-				open={isDeleteDialogOpen}
-				onOpenChange={setIsDeleteDialogOpen}
-			>
-				<AlertDialogContent>
-					<AlertDialogHeader>
-						<AlertDialogTitle>Are you sure?</AlertDialogTitle>
-						<AlertDialogDescription>
-							This action will permanently delete the station "{station.name}".
-							This action cannot be undone and may affect existing bookings.
-						</AlertDialogDescription>
-					</AlertDialogHeader>
-					<AlertDialogFooter>
-						<AlertDialogCancel>Cancel</AlertDialogCancel>
-						<AlertDialogAction
-							className='bg-destructive hover:bg-destructive/90'
-							onClick={handleDeleteConfirm}
-						>
-							Delete
-						</AlertDialogAction>
-					</AlertDialogFooter>
-				</AlertDialogContent>
-			</AlertDialog>
 		</>
 	);
 }

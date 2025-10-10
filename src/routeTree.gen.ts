@@ -13,10 +13,13 @@ import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as RegisterIndexRouteImport } from './routes/register/index'
 import { Route as LoginIndexRouteImport } from './routes/login/index'
-import { Route as AuthenticatedStationsRouteImport } from './routes/_authenticated/stations'
 import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedBookingsRouteImport } from './routes/_authenticated/bookings'
+import { Route as AuthenticatedStationsIndexRouteImport } from './routes/_authenticated/stations/index'
+import { Route as AuthenticatedStationsCreateRouteImport } from './routes/_authenticated/stations/create'
+import { Route as AuthenticatedStationsStationIdIndexRouteImport } from './routes/_authenticated/stations/$stationId/index'
+import { Route as AuthenticatedStationsStationIdEditRouteImport } from './routes/_authenticated/stations/$stationId/edit'
 
 const AuthenticatedRoute = AuthenticatedRouteImport.update({
   id: '/_authenticated',
@@ -37,11 +40,6 @@ const LoginIndexRoute = LoginIndexRouteImport.update({
   path: '/login/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthenticatedStationsRoute = AuthenticatedStationsRouteImport.update({
-  id: '/stations',
-  path: '/stations',
-  getParentRoute: () => AuthenticatedRoute,
-} as any)
 const AuthenticatedSettingsRoute = AuthenticatedSettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
@@ -57,24 +55,54 @@ const AuthenticatedBookingsRoute = AuthenticatedBookingsRouteImport.update({
   path: '/bookings',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+const AuthenticatedStationsIndexRoute =
+  AuthenticatedStationsIndexRouteImport.update({
+    id: '/stations/',
+    path: '/stations/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedStationsCreateRoute =
+  AuthenticatedStationsCreateRouteImport.update({
+    id: '/stations/create',
+    path: '/stations/create',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedStationsStationIdIndexRoute =
+  AuthenticatedStationsStationIdIndexRouteImport.update({
+    id: '/stations/$stationId/',
+    path: '/stations/$stationId/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedStationsStationIdEditRoute =
+  AuthenticatedStationsStationIdEditRouteImport.update({
+    id: '/stations/$stationId/edit',
+    path: '/stations/$stationId/edit',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/bookings': typeof AuthenticatedBookingsRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/settings': typeof AuthenticatedSettingsRoute
-  '/stations': typeof AuthenticatedStationsRoute
   '/login': typeof LoginIndexRoute
   '/register': typeof RegisterIndexRoute
+  '/stations/create': typeof AuthenticatedStationsCreateRoute
+  '/stations': typeof AuthenticatedStationsIndexRoute
+  '/stations/$stationId/edit': typeof AuthenticatedStationsStationIdEditRoute
+  '/stations/$stationId': typeof AuthenticatedStationsStationIdIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/bookings': typeof AuthenticatedBookingsRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/settings': typeof AuthenticatedSettingsRoute
-  '/stations': typeof AuthenticatedStationsRoute
   '/login': typeof LoginIndexRoute
   '/register': typeof RegisterIndexRoute
+  '/stations/create': typeof AuthenticatedStationsCreateRoute
+  '/stations': typeof AuthenticatedStationsIndexRoute
+  '/stations/$stationId/edit': typeof AuthenticatedStationsStationIdEditRoute
+  '/stations/$stationId': typeof AuthenticatedStationsStationIdIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -83,9 +111,12 @@ export interface FileRoutesById {
   '/_authenticated/bookings': typeof AuthenticatedBookingsRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/settings': typeof AuthenticatedSettingsRoute
-  '/_authenticated/stations': typeof AuthenticatedStationsRoute
   '/login/': typeof LoginIndexRoute
   '/register/': typeof RegisterIndexRoute
+  '/_authenticated/stations/create': typeof AuthenticatedStationsCreateRoute
+  '/_authenticated/stations/': typeof AuthenticatedStationsIndexRoute
+  '/_authenticated/stations/$stationId/edit': typeof AuthenticatedStationsStationIdEditRoute
+  '/_authenticated/stations/$stationId/': typeof AuthenticatedStationsStationIdIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -94,18 +125,24 @@ export interface FileRouteTypes {
     | '/bookings'
     | '/dashboard'
     | '/settings'
-    | '/stations'
     | '/login'
     | '/register'
+    | '/stations/create'
+    | '/stations'
+    | '/stations/$stationId/edit'
+    | '/stations/$stationId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/bookings'
     | '/dashboard'
     | '/settings'
-    | '/stations'
     | '/login'
     | '/register'
+    | '/stations/create'
+    | '/stations'
+    | '/stations/$stationId/edit'
+    | '/stations/$stationId'
   id:
     | '__root__'
     | '/'
@@ -113,9 +150,12 @@ export interface FileRouteTypes {
     | '/_authenticated/bookings'
     | '/_authenticated/dashboard'
     | '/_authenticated/settings'
-    | '/_authenticated/stations'
     | '/login/'
     | '/register/'
+    | '/_authenticated/stations/create'
+    | '/_authenticated/stations/'
+    | '/_authenticated/stations/$stationId/edit'
+    | '/_authenticated/stations/$stationId/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -155,13 +195,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoginIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_authenticated/stations': {
-      id: '/_authenticated/stations'
-      path: '/stations'
-      fullPath: '/stations'
-      preLoaderRoute: typeof AuthenticatedStationsRouteImport
-      parentRoute: typeof AuthenticatedRoute
-    }
     '/_authenticated/settings': {
       id: '/_authenticated/settings'
       path: '/settings'
@@ -183,6 +216,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedBookingsRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/stations/': {
+      id: '/_authenticated/stations/'
+      path: '/stations'
+      fullPath: '/stations'
+      preLoaderRoute: typeof AuthenticatedStationsIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/stations/create': {
+      id: '/_authenticated/stations/create'
+      path: '/stations/create'
+      fullPath: '/stations/create'
+      preLoaderRoute: typeof AuthenticatedStationsCreateRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/stations/$stationId/': {
+      id: '/_authenticated/stations/$stationId/'
+      path: '/stations/$stationId'
+      fullPath: '/stations/$stationId'
+      preLoaderRoute: typeof AuthenticatedStationsStationIdIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/stations/$stationId/edit': {
+      id: '/_authenticated/stations/$stationId/edit'
+      path: '/stations/$stationId/edit'
+      fullPath: '/stations/$stationId/edit'
+      preLoaderRoute: typeof AuthenticatedStationsStationIdEditRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
   }
 }
 
@@ -190,14 +251,22 @@ interface AuthenticatedRouteChildren {
   AuthenticatedBookingsRoute: typeof AuthenticatedBookingsRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
-  AuthenticatedStationsRoute: typeof AuthenticatedStationsRoute
+  AuthenticatedStationsCreateRoute: typeof AuthenticatedStationsCreateRoute
+  AuthenticatedStationsIndexRoute: typeof AuthenticatedStationsIndexRoute
+  AuthenticatedStationsStationIdEditRoute: typeof AuthenticatedStationsStationIdEditRoute
+  AuthenticatedStationsStationIdIndexRoute: typeof AuthenticatedStationsStationIdIndexRoute
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedBookingsRoute: AuthenticatedBookingsRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
-  AuthenticatedStationsRoute: AuthenticatedStationsRoute,
+  AuthenticatedStationsCreateRoute: AuthenticatedStationsCreateRoute,
+  AuthenticatedStationsIndexRoute: AuthenticatedStationsIndexRoute,
+  AuthenticatedStationsStationIdEditRoute:
+    AuthenticatedStationsStationIdEditRoute,
+  AuthenticatedStationsStationIdIndexRoute:
+    AuthenticatedStationsStationIdIndexRoute,
 }
 
 const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(

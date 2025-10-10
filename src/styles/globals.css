@@ -121,3 +121,23 @@
 		@apply bg-background text-foreground;
 	}
 }
+
+/* overlap dialogs */
+@layer components {
+	.leaflet-container,
+	.leaflet-pane,
+	.leaflet-tile-pane,
+	.leaflet-overlay-pane,
+	.leaflet-shadow-pane,
+	.leaflet-marker-pane,
+	.leaflet-tooltip-pane,
+	.leaflet-popup-pane {
+		z-index: auto !important;
+	}
+	
+	/* z-index */
+	.leaflet-control-container,
+	.leaflet-control {
+		z-index: 10 !important;
+	}
+}
