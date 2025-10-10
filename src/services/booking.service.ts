@@ -9,6 +9,7 @@ import type {
 	IQRValidationRequest,
 	IUpdateBookingRequest,
 } from '@/types/booking';
+import { BookingStatus } from '@/types/booking';
 
 import apiClient from './api-client';
 
@@ -16,7 +17,7 @@ import apiClient from './api-client';
  * Booking service for managing charging station bookings
  */
 class BookingService {
-	private readonly baseURL = '/bookings';
+	private readonly baseURL = '/api/bookings';
 
 	/**
 	 * Get all bookings (Backoffice only)
@@ -66,9 +67,24 @@ class BookingService {
 	 * Get bookings for a specific station
 	 */
 	async getBookingsByStation(stationId: string): Promise<IBooking[]> {
-		return await apiClient.get<IBooking[]>(
+		const res = await apiClient.get<IBooking[]>(
 			`${this.baseURL}/station/${stationId}`,
 		);
+
+		// Map integer status to BookingStatus enum
+		const statusEnumMap: Record<number, BookingStatus> = {
+			0: BookingStatus.Pending,
+			1: BookingStatus.Approved,
+			2: BookingStatus.Cancelled,
+			3: BookingStatus.Completed,
+		};
+
+		const formatted = res.map((booking) => ({
+			...booking,
+			status: statusEnumMap[Number(booking.status)] ?? BookingStatus.Pending,
+		}));
+
+		return formatted;
 	}
 
 	/**

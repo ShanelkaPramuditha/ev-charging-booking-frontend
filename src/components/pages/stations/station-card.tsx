@@ -37,13 +37,18 @@ export function StationCard({ station }: StationCardProps) {
 
 	const userProfile = user as IUserProfile;
 	const isBackoffice = userProfile?.role === 'backOffice';
-	const isOperator =
-		userProfile?.role === 'operator' && userProfile?.id === station.operatorId;
-	const canEdit = isBackoffice || isOperator;
+	const canEdit = isBackoffice;
 
 	const handleViewDetails = () => {
 		navigate({
 			to: '/stations/$stationId',
+			params: { stationId: station.id },
+		});
+	};
+
+	const handleViewBookings = () => {
+		navigate({
+			to: '/stations/$stationId/bookings',
 			params: { stationId: station.id },
 		});
 	};
@@ -187,12 +192,21 @@ export function StationCard({ station }: StationCardProps) {
 							{station.operator.username}
 						</div>
 					)}
+
 					<Button
 						variant='outline'
 						className='w-full'
 						onClick={handleViewDetails}
 					>
 						View Details
+					</Button>
+					{/* View Bookings */}
+					<Button
+						variant='default'
+						className='w-full'
+						onClick={handleViewBookings}
+					>
+						View Bookings
 					</Button>
 				</CardFooter>
 			</Card>

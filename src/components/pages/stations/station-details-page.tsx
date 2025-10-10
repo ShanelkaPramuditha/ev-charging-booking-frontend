@@ -47,7 +47,8 @@ export function StationDetailsPage() {
 		userProfile?.role === 'operator' &&
 		station &&
 		userProfile?.id === station.operatorId;
-	const canEdit = isBackoffice || isOperator;
+	const canEdit = isBackoffice;
+	const canEditSlots = isBackoffice || isOperator;
 
 	const handleBack = () => {
 		navigate({ to: '/stations' });
@@ -196,7 +197,7 @@ export function StationDetailsPage() {
 					{/* Schedule */}
 					<Card>
 						<CardHeader>
-							<div className='flex items-center justify-between'>
+							<div className='flex flex-col gap-2'>
 								<div>
 									<CardTitle className='flex items-center gap-2'>
 										<Calendar className='h-5 w-5' />
@@ -206,25 +207,26 @@ export function StationDetailsPage() {
 										Weekly operating hours for this station
 									</CardDescription>
 								</div>
-								{canEdit && (
-									<Button
-										variant='outline'
-										size='sm'
-										onClick={() => setScheduleDialogOpen(true)}
-									>
-										<Clock className='mr-2 h-4 w-4' />
-										Manage Schedule
-									</Button>
-								)}
-								{canEdit && (
-									<Button
-										variant='outline'
-										size='sm'
-										onClick={() => setSlotsDialogOpen(true)}
-									>
-										<Plug className='mr-2 h-4 w-4' />
-										Manage Slots
-									</Button>
+								{canEditSlots && (
+									<div className='flex gap-4'>
+										<Button
+											variant='outline'
+											size='sm'
+											onClick={() => setScheduleDialogOpen(true)}
+										>
+											<Clock className='mr-2 h-4 w-4' />
+											Manage Schedule
+										</Button>
+
+										<Button
+											variant='outline'
+											size='sm'
+											onClick={() => setSlotsDialogOpen(true)}
+										>
+											<Plug className='mr-2 h-4 w-4' />
+											Manage Slots
+										</Button>
+									</div>
 								)}
 							</div>
 						</CardHeader>

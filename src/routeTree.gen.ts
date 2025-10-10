@@ -20,6 +20,7 @@ import { Route as AuthenticatedStationsIndexRouteImport } from './routes/_authen
 import { Route as AuthenticatedStationsCreateRouteImport } from './routes/_authenticated/stations/create'
 import { Route as AuthenticatedStationsStationIdIndexRouteImport } from './routes/_authenticated/stations/$stationId/index'
 import { Route as AuthenticatedStationsStationIdEditRouteImport } from './routes/_authenticated/stations/$stationId/edit'
+import { Route as AuthenticatedStationsStationIdBookingsRouteImport } from './routes/_authenticated/stations/$stationId/bookings'
 
 const AuthenticatedRoute = AuthenticatedRouteImport.update({
   id: '/_authenticated',
@@ -79,6 +80,12 @@ const AuthenticatedStationsStationIdEditRoute =
     path: '/stations/$stationId/edit',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedStationsStationIdBookingsRoute =
+  AuthenticatedStationsStationIdBookingsRouteImport.update({
+    id: '/stations/$stationId/bookings',
+    path: '/stations/$stationId/bookings',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -89,6 +96,7 @@ export interface FileRoutesByFullPath {
   '/register': typeof RegisterIndexRoute
   '/stations/create': typeof AuthenticatedStationsCreateRoute
   '/stations': typeof AuthenticatedStationsIndexRoute
+  '/stations/$stationId/bookings': typeof AuthenticatedStationsStationIdBookingsRoute
   '/stations/$stationId/edit': typeof AuthenticatedStationsStationIdEditRoute
   '/stations/$stationId': typeof AuthenticatedStationsStationIdIndexRoute
 }
@@ -101,6 +109,7 @@ export interface FileRoutesByTo {
   '/register': typeof RegisterIndexRoute
   '/stations/create': typeof AuthenticatedStationsCreateRoute
   '/stations': typeof AuthenticatedStationsIndexRoute
+  '/stations/$stationId/bookings': typeof AuthenticatedStationsStationIdBookingsRoute
   '/stations/$stationId/edit': typeof AuthenticatedStationsStationIdEditRoute
   '/stations/$stationId': typeof AuthenticatedStationsStationIdIndexRoute
 }
@@ -115,6 +124,7 @@ export interface FileRoutesById {
   '/register/': typeof RegisterIndexRoute
   '/_authenticated/stations/create': typeof AuthenticatedStationsCreateRoute
   '/_authenticated/stations/': typeof AuthenticatedStationsIndexRoute
+  '/_authenticated/stations/$stationId/bookings': typeof AuthenticatedStationsStationIdBookingsRoute
   '/_authenticated/stations/$stationId/edit': typeof AuthenticatedStationsStationIdEditRoute
   '/_authenticated/stations/$stationId/': typeof AuthenticatedStationsStationIdIndexRoute
 }
@@ -129,6 +139,7 @@ export interface FileRouteTypes {
     | '/register'
     | '/stations/create'
     | '/stations'
+    | '/stations/$stationId/bookings'
     | '/stations/$stationId/edit'
     | '/stations/$stationId'
   fileRoutesByTo: FileRoutesByTo
@@ -141,6 +152,7 @@ export interface FileRouteTypes {
     | '/register'
     | '/stations/create'
     | '/stations'
+    | '/stations/$stationId/bookings'
     | '/stations/$stationId/edit'
     | '/stations/$stationId'
   id:
@@ -154,6 +166,7 @@ export interface FileRouteTypes {
     | '/register/'
     | '/_authenticated/stations/create'
     | '/_authenticated/stations/'
+    | '/_authenticated/stations/$stationId/bookings'
     | '/_authenticated/stations/$stationId/edit'
     | '/_authenticated/stations/$stationId/'
   fileRoutesById: FileRoutesById
@@ -244,6 +257,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedStationsStationIdEditRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/stations/$stationId/bookings': {
+      id: '/_authenticated/stations/$stationId/bookings'
+      path: '/stations/$stationId/bookings'
+      fullPath: '/stations/$stationId/bookings'
+      preLoaderRoute: typeof AuthenticatedStationsStationIdBookingsRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
   }
 }
 
@@ -253,6 +273,7 @@ interface AuthenticatedRouteChildren {
   AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
   AuthenticatedStationsCreateRoute: typeof AuthenticatedStationsCreateRoute
   AuthenticatedStationsIndexRoute: typeof AuthenticatedStationsIndexRoute
+  AuthenticatedStationsStationIdBookingsRoute: typeof AuthenticatedStationsStationIdBookingsRoute
   AuthenticatedStationsStationIdEditRoute: typeof AuthenticatedStationsStationIdEditRoute
   AuthenticatedStationsStationIdIndexRoute: typeof AuthenticatedStationsStationIdIndexRoute
 }
@@ -263,6 +284,8 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
   AuthenticatedStationsCreateRoute: AuthenticatedStationsCreateRoute,
   AuthenticatedStationsIndexRoute: AuthenticatedStationsIndexRoute,
+  AuthenticatedStationsStationIdBookingsRoute:
+    AuthenticatedStationsStationIdBookingsRoute,
   AuthenticatedStationsStationIdEditRoute:
     AuthenticatedStationsStationIdEditRoute,
   AuthenticatedStationsStationIdIndexRoute:

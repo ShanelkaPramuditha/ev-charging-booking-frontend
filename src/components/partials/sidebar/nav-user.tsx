@@ -1,5 +1,5 @@
 import { useNavigate } from '@tanstack/react-router';
-import { BadgeCheck, CreditCard, LogOut } from 'lucide-react';
+import { BadgeCheck, LogOut } from 'lucide-react';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
@@ -87,10 +87,6 @@ export function NavUser({
 							>
 								<BadgeCheck />
 								{settingsTabs[0].label}
-							</DropdownMenuItem>
-							<DropdownMenuItem>
-								<CreditCard />
-								Billing
 							</DropdownMenuItem>
 						</DropdownMenuGroup>
 						<DropdownMenuSeparator />
