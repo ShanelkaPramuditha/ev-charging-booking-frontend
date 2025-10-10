@@ -1,12 +1,4 @@
-import {
-	Calendar,
-	CheckCircle2,
-	Clock,
-	MapPin,
-	MoreVertical,
-	XCircle,
-} from 'lucide-react';
-import { useState } from 'react';
+import { Calendar, Clock, MapPin, MoreVertical } from 'lucide-react';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -34,8 +26,6 @@ const statusColors = {
 
 export function BookingCard({ booking }: BookingCardProps) {
 	const { user } = useAuth();
-	const [showQR, setShowQR] = useState(false);
-	const [showCancel, setShowCancel] = useState(false);
 
 	const userProfile = user as import('@/types/user').IUserProfile;
 	const isEVOwner = userProfile?.role === 'evOwner';
@@ -63,7 +53,11 @@ export function BookingCard({ booking }: BookingCardProps) {
 					</DropdownMenuTrigger>
 					<DropdownMenuContent align='end'>
 						{booking.status === BookingStatus.Approved && isEVOwner && (
-							<DropdownMenuItem onClick={() => setShowQR(true)}>
+							<DropdownMenuItem
+								onClick={() => {
+									/* TODO: Implement QR code dialog */
+								}}
+							>
 								View QR Code
 							</DropdownMenuItem>
 						)}
@@ -86,7 +80,9 @@ export function BookingCard({ booking }: BookingCardProps) {
 						{booking.status !== BookingStatus.Cancelled &&
 							booking.status !== BookingStatus.Completed && (
 								<DropdownMenuItem
-									onClick={() => setShowCancel(true)}
+									onClick={() => {
+										/* TODO: Implement cancel dialog */
+									}}
 									className='text-destructive'
 								>
 									Cancel

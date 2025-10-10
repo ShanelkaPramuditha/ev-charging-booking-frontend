@@ -1,3 +1,4 @@
+import { useNavigate } from '@tanstack/react-router';
 import { Plus } from 'lucide-react';
 import { useState } from 'react';
 
@@ -15,20 +16,23 @@ import { useAuth } from '@/context/auth/use-auth';
 import { useStations } from '@/queries/station.queries';
 import type { IUserProfile } from '@/types/user';
 
-import { CreateStationDialog } from './create-station-dialog';
 import { StationCard } from './station-card';
 
 export function StationsPage() {
+	const navigate = useNavigate();
 	const { user } = useAuth();
 	const { data: stations, isLoading } = useStations();
 	const [searchQuery, setSearchQuery] = useState('');
 	const [filterStatus, setFilterStatus] = useState<
 		'all' | 'active' | 'inactive'
 	>('all');
-	const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
 
 	const userProfile = user as IUserProfile;
 	const isBackoffice = userProfile?.role === 'backOffice';
+
+	const handleCreateStation = () => {
+		navigate({ to: '/stations/create' });
+	};
 
 	// Filter stations
 	const filteredStations = stations?.filter((station) => {
@@ -36,7 +40,9 @@ export function StationsPage() {
 			station.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
 			station.type?.toLowerCase().includes(searchQuery.toLowerCase()) ||
 			station.address?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-			station.operatorName?.toLowerCase().includes(searchQuery.toLowerCase());
+			station.operator?.username
+				?.toLowerCase()
+				.includes(searchQuery.toLowerCase());
 
 		const matchesStatus =
 			filterStatus === 'all' ||
@@ -59,7 +65,7 @@ export function StationsPage() {
 					</p>
 				</div>
 				{isBackoffice && (
-					<Button onClick={() => setIsCreateDialogOpen(true)}>
+					<Button onClick={handleCreateStation}>
 						<Plus className='mr-2 h-4 w-4' />
 						Add Station
 					</Button>
@@ -121,7 +127,7 @@ export function StationsPage() {
 						<Button
 							variant='outline'
 							className='mt-4'
-							onClick={() => setIsCreateDialogOpen(true)}
+							onClick={handleCreateStation}
 						>
 							<Plus className='mr-2 h-4 w-4' />
 							Add Your First Station
@@ -129,12 +135,6 @@ export function StationsPage() {
 					)}
 				</div>
 			)}
-
-			{/* Create Station Dialog */}
-			<CreateStationDialog
-				open={isCreateDialogOpen}
-				onOpenChange={setIsCreateDialogOpen}
-			/>
 		</div>
 	);
 }
