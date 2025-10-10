@@ -13,6 +13,7 @@ import { BookingStatus } from '@/types/booking';
 
 import { BookingCard } from './booking-card';
 import { CreateBookingDialog } from './create-booking-dialog';
+import { ValidateQRDialog } from './validate-qr-dialog';
 
 export function BookingsPage() {
 	const { user } = useAuth();
@@ -21,6 +22,7 @@ export function BookingsPage() {
 		'all',
 	);
 	const [showCreateDialog, setShowCreateDialog] = useState(false);
+	const [showValidateDialog, setShowValidateDialog] = useState(false);
 
 	// Role-based data fetching
 	const userProfile = user as import('@/types/user').IUserProfile;
@@ -61,12 +63,22 @@ export function BookingsPage() {
 							: 'Manage all charging station bookings'}
 					</p>
 				</div>
-				{isEVOwner && (
-					<Button onClick={() => setShowCreateDialog(true)}>
-						<Plus className='mr-2 h-4 w-4' />
-						New Booking
-					</Button>
-				)}
+				<div className='flex items-center gap-2'>
+					{!isEVOwner && (
+						<Button
+							onClick={() => setShowValidateDialog(true)}
+							variant='outline'
+						>
+							Validate QR
+						</Button>
+					)}
+					{isEVOwner && (
+						<Button onClick={() => setShowCreateDialog(true)}>
+							<Plus className='mr-2 h-4 w-4' />
+							New Booking
+						</Button>
+					)}
+				</div>
 			</div>
 
 			{/* Stats for EV Owners */}
@@ -183,6 +195,14 @@ export function BookingsPage() {
 				<CreateBookingDialog
 					open={showCreateDialog}
 					onOpenChange={setShowCreateDialog}
+				/>
+			)}
+
+			{/* Validate QR dialog for operators/backoffice */}
+			{!isEVOwner && (
+				<ValidateQRDialog
+					open={showValidateDialog}
+					onOpenChange={setShowValidateDialog}
 				/>
 			)}
 		</div>
