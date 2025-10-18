@@ -14,18 +14,32 @@ import {
 import { Skeleton } from '@/components/ui/skeleton';
 import { useAuth } from '@/context/auth/use-auth';
 import { useStations } from '@/queries/station.queries';
-import type { IUserProfile } from '@/types/user';
+import { type IUserProfile, USER_ROLES } from '@/types/user';
 
 import { StationCard } from './station-card';
 
 export function StationsPage() {
+	let stations = [];
 	const navigate = useNavigate();
 	const { user } = useAuth();
-	const { data: stations, isLoading } = useStations();
+	const { data: stationData, isLoading } = useStations();
 	const [searchQuery, setSearchQuery] = useState('');
 	const [filterStatus, setFilterStatus] = useState<
 		'all' | 'active' | 'inactive'
 	>('all');
+
+	// If user is operator
+	const isOperator = user?.role === USER_ROLES.OPERATOR;
+	stations = stationData || [];
+
+	// Filter stations for operators to only show their stations
+	if (isOperator) {
+		const operatorUsername = user.username;
+
+		stations = stations?.filter(
+			(station) => station.operator?.username === operatorUsername,
+		);
+	}
 
 	const userProfile = user as IUserProfile;
 	const isBackoffice = userProfile?.role === 'backOffice';

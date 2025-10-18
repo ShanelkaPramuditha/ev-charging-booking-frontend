@@ -18,6 +18,7 @@ import type {
 	UpdateStationSlotsRequest,
 	UpdateStationStatusRequest,
 } from '@/types/station';
+import { getErrorMessage } from '@/utils/error.util';
 
 /**
  * Query keys for station queries
@@ -123,7 +124,7 @@ export const useCreateStation = (): UseMutationResult<
 		},
 		onError: (error: Error) => {
 			toast.error('Failed to create station', {
-				description: error.message || 'Please try again.',
+				description: getErrorMessage(error, 'Please try again.'),
 			});
 		},
 	});
@@ -152,7 +153,7 @@ export const useUpdateStation = (): UseMutationResult<
 		},
 		onError: (error: Error) => {
 			toast.error('Failed to update station', {
-				description: error.message || 'Please try again.',
+				description: getErrorMessage(error, 'Please try again.'),
 			});
 		},
 	});
@@ -184,7 +185,7 @@ export const useUpdateStationSlots = (): UseMutationResult<
 		},
 		onError: (error: Error) => {
 			toast.error('Failed to update slots', {
-				description: error.message || 'Please try again.',
+				description: getErrorMessage(error, 'Please try again.'),
 			});
 		},
 	});
@@ -216,7 +217,7 @@ export const useUpdateStationSchedule = (): UseMutationResult<
 		},
 		onError: (error: Error) => {
 			toast.error('Failed to update schedule', {
-				description: error.message || 'Please try again.',
+				description: getErrorMessage(error, 'Please try again.'),
 			});
 		},
 	});
@@ -243,7 +244,7 @@ export const useAssignOperator = (): UseMutationResult<
 		},
 		onError: (error: Error) => {
 			toast.error('Failed to assign operator', {
-				description: error.message || 'Please try again.',
+				description: getErrorMessage(error, 'Please try again.'),
 			});
 		},
 	});
@@ -276,8 +277,9 @@ export const useUpdateStationStatus = (): UseMutationResult<
 			queryClient.invalidateQueries({ queryKey: stationKeys.lists() });
 		},
 		onError: (error: Error) => {
+			console.log('Error updating station status:', error);
 			toast.error('Failed to update station status', {
-				description: error.message || 'Please try again.',
+				description: getErrorMessage(error, 'Please try again.'),
 			});
 		},
 	});
@@ -302,8 +304,10 @@ export const useDeleteStation = (): UseMutationResult<
 		},
 		onError: (error: Error) => {
 			toast.error('Failed to delete station', {
-				description:
-					error.message || 'Cannot delete station with active bookings.',
+				description: getErrorMessage(
+					error,
+					'Cannot delete station with active bookings.',
+				),
 			});
 		},
 	});

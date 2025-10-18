@@ -15,6 +15,7 @@ import {
 } from '@/components/ui/sidebar';
 import { useAuth } from '@/context/auth/use-auth';
 import { useLogout } from '@/queries/auth.queries';
+import { USER_ROLES } from '@/types/user';
 
 const navItems = [
 	{
@@ -22,6 +23,7 @@ const navItems = [
 		url: '/dashboard',
 		icon: SquareTerminal,
 		isActive: true,
+		users: [USER_ROLES.BACK_OFFICE, USER_ROLES.OPERATOR, USER_ROLES.EV_OWNER],
 	},
 	{
 		title: 'Bookings',
@@ -33,6 +35,7 @@ const navItems = [
 				url: '/bookings',
 			},
 		],
+		users: [USER_ROLES.EV_OWNER],
 	},
 	{
 		title: 'Stations',
@@ -76,6 +79,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 	};
 
 	if (!user) return null;
+	// Show only items allowed for the current user's role; if `users` is omitted, it's visible to all
+	const filteredNavItems = navItems.filter(
+		(item) => !item.users || item.users.includes(user.role),
+	);
 
 	return (
 		<Sidebar collapsible='icon' {...props}>
@@ -93,7 +100,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 				</div>
 			</SidebarHeader>
 			<SidebarContent>
-				<NavMain items={navItems} />
+				<NavMain items={filteredNavItems} />
 			</SidebarContent>
 			<SidebarFooter>
 				<NavUser user={user} onClickLogout={handleLogout} />

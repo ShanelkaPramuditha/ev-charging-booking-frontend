@@ -3,11 +3,19 @@
  */
 export type UserRole = 'backOffice' | 'operator' | 'evOwner';
 
+export enum USER_ROLES {
+	BACK_OFFICE = 'backOffice',
+	OPERATOR = 'operator',
+	EV_OWNER = 'evOwner',
+}
+
 /**
  * Base user interface
  */
 export interface IUser {
 	id: string;
+	isActive: boolean;
+	role: USER_ROLES;
 	email: string;
 	nic?: string;
 	username: string;
@@ -20,7 +28,6 @@ export interface IUser {
  * Extended user interface with role and status
  */
 export interface IUserProfile extends IUser {
-	role: UserRole;
 	isActive: boolean;
 	phoneNumber?: string;
 	address?: string;
@@ -31,7 +38,7 @@ export interface IUserProfile extends IUser {
  * EV Owner specific profile
  */
 export interface IEVOwnerProfile extends IUserProfile {
-	role: 'evOwner';
+	role: USER_ROLES.EV_OWNER;
 	vehicleInfo?: {
 		make?: string;
 		model?: string;
